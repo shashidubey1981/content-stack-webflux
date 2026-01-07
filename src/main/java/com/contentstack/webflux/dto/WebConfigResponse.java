@@ -35,6 +35,9 @@ public class WebConfigResponse {
 
         private Asset logo;
 
+        @JsonProperty("quick_links")
+        private QuickLink quickLinks;
+
         @JsonProperty("main_navigation")
         private List<Navigation> mainNavigation;
 
@@ -48,6 +51,25 @@ public class WebConfigResponse {
         @JsonProperty("user_form")
         private List<UserFormModal> userForm;
 
+    }
+
+    // ============ QUICK LINKS ============
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class QuickLink {
+        public String title;
+        public List<QuickLinkCategory> items;
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class QuickLinkCategory {
+        @JsonProperty("link_text")
+        public String linkText;
+        @JsonProperty("link")
+        public String link;
     }
 
     // ============ NAVIGATION ============

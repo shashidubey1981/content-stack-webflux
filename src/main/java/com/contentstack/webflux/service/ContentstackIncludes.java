@@ -42,6 +42,12 @@ public final class ContentstackIncludes {
             "featured_articles.articles"
     );
 
+    // ================= QUICK LINKS =================
+    public static final List<String> QUICK_LINKS_REFERENCE_INCLUDES = List.of(
+            "quick_links",
+            "quick_links.items",
+            "quick_links.items.link"
+    );
     // ================= NAVIGATION =================
     public static final List<String> NAVIGATION_REFERENCE_INCLUDES = List.of(
             "main_navigation",

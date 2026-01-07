@@ -69,6 +69,7 @@ public class ContentstackClientService {
 
         
 
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.QUICK_LINKS_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
         
