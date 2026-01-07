@@ -19,6 +19,8 @@ public class WebConfigResponse {
     // ============ TOP LEVEL WRAPPER ============
     private List<WebConfig> entries;
 
+    
+
     // ============ ENTRY MODEL ============
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)

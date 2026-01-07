@@ -10,6 +10,12 @@ public final class ContentstackIncludes {
 
     private ContentstackIncludes() {}
 
+    // ================= DYNAMIC CONTENT =================
+    public static final List<String> DYNAMIC_COMPONENT_REFERENCEINCLUDES = List.of(
+        "dynamic_component"
+        
+);
+    
     // ================= HERO =================
     public static final List<String> HERO_REFERENCE_INCLUDES = List.of(
             "hero",
@@ -39,18 +45,21 @@ public final class ContentstackIncludes {
     // ================= NAVIGATION =================
     public static final List<String> NAVIGATION_REFERENCE_INCLUDES = List.of(
             "main_navigation",
+            "main_navigation.items",
             "main_navigation.items.link",
             "main_navigation.items.mega_menu",
+            "main_navigation.items.mega_menu.sections",
             "main_navigation.items.mega_menu.sections.link",
-            "main_navigation.items.mega_menu.sections.links.link",
-            "main_navigation.items.mega_menu.cta_group",
-            "main_navigation.items.mega_menu.cta_group.call_to_action.internal_link"
+            "main_navigation.items.mega_menu.sections.links",
+            "main_navigation.items.mega_menu.sections.links.link"
     );
 
     // ================= FOOTER =================
     public static final List<String> FOOTER_REFERENCE_INCLUDES = List.of(
             "footer_navigation",
+            "footer_navigation.sections",
             "footer_navigation.sections.link",
+            "footer_navigation.sections.links",
             "footer_navigation.sections.links.link"
     );
 

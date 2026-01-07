@@ -3,7 +3,8 @@ package com.contentstack.webflux.service;
 import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,10 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-@Slf4j
 public class ContentstackClientService {
 
+    private static final Logger log = LoggerFactory.getLogger(ContentstackClientService.class);
+    
     private final ContentstackConfig config;
     private final WebClient.Builder webClientBuilder;
 
@@ -65,18 +67,13 @@ public class ContentstackClientService {
             uriBuilder.queryParam("locale", locale);
         }
 
-        // Add variant if provided
-        if (variant != null && !variant.isEmpty()) {
-            uriBuilder.queryParam("variant", variant);
-        }
+        
 
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
         
         
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
-        log.debug("Request URI: {}", uri);
-
         
         return getWebClient()
                 .get()
