@@ -3,9 +3,7 @@ package com.contentstack.webflux.service;
 import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -23,12 +21,10 @@ public class ContentstackClientService {
 
     private final ContentstackConfig config;
     private final WebClient.Builder webClientBuilder;
-    private final ObjectMapper objectMapper;
 
-    public ContentstackClientService(ContentstackConfig config, WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
+    public ContentstackClientService(ContentstackConfig config, WebClient.Builder webClientBuilder) {
         this.config = config;
         this.webClientBuilder = webClientBuilder;
-        this.objectMapper = objectMapper;
     }
 
     private WebClient getWebClient() {
@@ -46,7 +42,7 @@ public class ContentstackClientService {
                 .build();
     }
 
-    public Mono<WebConfigResponse> fetchWebConfig(
+    public Mono<WebConfigResponse.WebConfig> fetchWebConfig(
             String contentTypeUid,
             String locale,
             String variant) {
@@ -73,6 +69,10 @@ public class ContentstackClientService {
         if (variant != null && !variant.isEmpty()) {
             uriBuilder.queryParam("variant", variant);
         }
+
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
+        
         
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);
@@ -83,20 +83,16 @@ public class ContentstackClientService {
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(WebConfigResponse.class)
-                .flatMap(responseMap -> {
-                    
-                    
-                    log.info("Found {} entries, using first entry", responseMap.getEntries().size());
-                    
-                    try {
-                        // Convert the entry map directly to WebConfigResponse
-                        // This preserves all dynamic fields from Contentstack
-                        log.info("Successfully converted entry to WebConfigResponse");
-                        return Mono.just(responseMap);
-                    } catch (Exception e) {
-                        log.error("Error converting entry to WebConfigResponse: {}", e.getMessage(), e);
-                        return Mono.error(e);
+                .flatMap(response -> {
+                    if (response == null || response.getEntries() == null || response.getEntries().isEmpty()) {
+                        log.warn("No entries found in response");
+                        return Mono.error(new RuntimeException("No entries found in response"));
                     }
+                    
+                    WebConfigResponse.WebConfig firstEntry = response.getEntries().get(0);
+                    log.info("Found {} entries, using first entry", response.getEntries().size());
+                    log.info("Successfully extracted web config entry");
+                    return Mono.just(firstEntry);
                 })
                 .doOnSuccess(response -> log.info("Successfully fetched web config"))
                 .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
