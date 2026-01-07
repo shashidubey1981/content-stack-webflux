@@ -35,7 +35,7 @@ public class ContentstackController {
      * GET /api/contentstack/entries?contentTypeUid={uid}&locale={locale}&variant={variant}
      */
     @GetMapping("/web-config")
-    public Mono<ResponseEntity<WebConfigResponse>> getEntries(
+    public Mono<ResponseEntity<WebConfigResponse.WebConfig>> getEntries(
             @RequestParam String contentTypeUid,
             @RequestParam(required = false) String locale,
             @RequestParam(required = false) String variant) {

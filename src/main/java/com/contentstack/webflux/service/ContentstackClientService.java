@@ -3,10 +3,9 @@ package com.contentstack.webflux.service;
 import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -22,13 +21,14 @@ import java.util.Objects;
 @Slf4j
 public class ContentstackClientService {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentstackClientService.class);
     private final ContentstackConfig config;
     private final WebClient.Builder webClientBuilder;
+    private final ObjectMapper objectMapper;
 
-    public ContentstackClientService(ContentstackConfig config, WebClient.Builder webClientBuilder) {
+    public ContentstackClientService(ContentstackConfig config, WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
         this.config = config;
         this.webClientBuilder = webClientBuilder;
+        this.objectMapper = objectMapper;
     }
 
     private WebClient getWebClient() {
@@ -74,23 +74,32 @@ public class ContentstackClientService {
             uriBuilder.queryParam("variant", variant);
         }
         
-        uriBuilder.queryParam("include[][]", "main_navigation");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.link");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.sections.link");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.sections.links.link");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.cta_group");
-        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.cta_group.call_to_action.internal_link");
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);
 
+        
         return getWebClient()
                 .get()
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(WebConfigResponse.class)
-                .doOnSuccess(response -> log.info("Successfully fetched web config", response.toString()))
-                .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
+                .flatMap(responseMap -> {
+                    
+                    
+                    log.info("Found {} entries, using first entry", responseMap.getEntries().size());
+                    
+                    try {
+                        // Convert the entry map directly to WebConfigResponse
+                        // This preserves all dynamic fields from Contentstack
+                        log.info("Successfully converted entry to WebConfigResponse");
+                        return Mono.just(responseMap);
+                    } catch (Exception e) {
+                        log.error("Error converting entry to WebConfigResponse: {}", e.getMessage(), e);
+                        return Mono.error(e);
+                    }
+                })
+                .doOnSuccess(response -> log.info("Successfully fetched web config"))
+                .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
     }
 
     /**
