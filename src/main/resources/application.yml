@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: webflux-bff
+
+contentstack:
+  api-key: ${CONTENTSTACK_API_KEY:blt72b7c04a5603cbef}
+  delivery-token: ${CONTENTSTACK_DELIVERY_TOKEN:cs2077b95f6eb3027fdd3e00f4}
+  environment: ${CONTENTSTACK_ENVIRONMENT:preview}
+  region: ${CONTENTSTACK_REGION:us}
+  base-url: https://cdn.contentstack.io/v3
+  graphql-base-url: ${CONTENTSTACK_GRAPHQL_BASE_URL:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.contentstack: DEBUG
+    org.springframework.web: INFO
+    reactor.netty: INFO
+
