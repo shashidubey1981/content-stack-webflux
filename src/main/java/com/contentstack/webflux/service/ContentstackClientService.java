@@ -37,7 +37,7 @@ public class ContentstackClientService {
                 "https://api.contentstack.io/v3");
         final String apiKey = Objects.requireNonNullElse(config.getApiKey(), "");
         final String deliveryToken = Objects.requireNonNullElse(config.getDeliveryToken(), "");
-        
+
         return webClientBuilder
                 .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -47,56 +47,63 @@ public class ContentstackClientService {
     }
 
     public Mono<WebConfigResponse> fetchWebConfig(
-        String contentTypeUid,
-        String locale,
-        String variant) {
+            String contentTypeUid,
+            String locale,
+            String variant) {
 
-    log.info("Fetching entries for content type: {}, locale: {}, variant: {}", 
-            contentTypeUid, locale, variant);
+        log.info("Fetching entries for content type: {}, locale: {}, variant: {}",
+                contentTypeUid, locale, variant);
 
-    final String baseUrl = Objects.requireNonNullElse(
-            (config.getApi() != null ? config.getApi().getBaseUrl() : null),
-            "https://api.contentstack.io/v3");
-    final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
-    log.info("Environment: {}", environment);
-    log.info("Base URL: {}", baseUrl);
-    UriComponentsBuilder uriBuilder = UriComponentsBuilder
-            .fromUriString(baseUrl)
-            .path("/content_types/{contentTypeUid}/entries");
+        final String baseUrl = Objects.requireNonNullElse(
+                (config.getApi() != null ? config.getApi().getBaseUrl() : null),
+                "https://api.contentstack.io/v3");
+        final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
+        log.info("Environment: {}", environment);
+        log.info("Base URL: {}", baseUrl);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/content_types/{contentTypeUid}/entries");
 
-    // Add locale if provided
-    if (locale != null && !locale.isEmpty()) {
-        uriBuilder.queryParam("locale", locale);
+        // Add locale if provided
+        if (locale != null && !locale.isEmpty()) {
+            uriBuilder.queryParam("locale", locale);
+        }
+
+        // Add variant if provided
+        if (variant != null && !variant.isEmpty()) {
+            uriBuilder.queryParam("variant", variant);
+        }
+        
+        uriBuilder.queryParam("include[][]", "main_navigation");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.link");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.sections.link");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.sections.links.link");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.cta_group");
+        uriBuilder.queryParam("include[][]", "main_navigation.items.mega_menu.cta_group.call_to_action.internal_link");
+        String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+        log.debug("Request URI: {}", uri);
+
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(WebConfigResponse.class)
+                .doOnSuccess(response -> log.info("Successfully fetched web config", response.toString()))
+                .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
     }
-
-    // Add variant if provided
-    if (variant != null && !variant.isEmpty()) {
-        uriBuilder.queryParam("variant", variant);
-    }
-
-    String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
-    log.debug("Request URI: {}", uri);
-
-    return getWebClient()
-            .get()
-            .uri(uri)
-            .retrieve()
-            .bodyToMono(WebConfigResponse.class)
-            .doOnSuccess(response -> log.info("Successfully fetched web config"))
-            .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
-}
 
     /**
      * Fetch entries from Contentstack with support for variants and locale
      *
      * @param contentTypeUid Content type UID
-     * @param locale Locale code (e.g., "en-us")
-     * @param variant Variant name
-     * @param include Fields to include
-     * @param exclude Fields to exclude
-     * @param query Query parameters
-     * @param skip Skip count for pagination
-     * @param limit Limit count for pagination
+     * @param locale         Locale code (e.g., "en-us")
+     * @param variant        Variant name
+     * @param include        Fields to include
+     * @param exclude        Fields to exclude
+     * @param query          Query parameters
+     * @param skip           Skip count for pagination
+     * @param limit          Limit count for pagination
      * @return Mono of ContentstackEntryResponse
      */
     public Mono<ContentstackEntryResponse> fetchEntries(
@@ -109,7 +116,7 @@ public class ContentstackClientService {
             Integer skip,
             Integer limit) {
 
-        log.info("Fetching entries for content type: {}, locale: {}, variant: {}", 
+        log.info("Fetching entries for content type: {}, locale: {}, variant: {}",
                 contentTypeUid, locale, variant);
 
         final String baseUrl = Objects.requireNonNullElse(
@@ -172,7 +179,7 @@ public class ContentstackClientService {
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(ContentstackEntryResponse.class)
-                .doOnSuccess(response -> log.info("Successfully fetched {} entries", 
+                .doOnSuccess(response -> log.info("Successfully fetched {} entries",
                         response.getCount() != null ? response.getCount() : 0))
                 .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
     }
@@ -180,8 +187,8 @@ public class ContentstackClientService {
     /**
      * Fetch entry by URL from Contentstack
      *
-     * @param url URL of the entry
-     * @param locale Locale code (e.g., "en-us")
+     * @param url     URL of the entry
+     * @param locale  Locale code (e.g., "en-us")
      * @param variant Variant name
      * @return Mono of ContentstackEntryResponse
      */
@@ -196,7 +203,7 @@ public class ContentstackClientService {
                 (config.getApi() != null ? config.getApi().getBaseUrl() : null),
                 "https://api.contentstack.io/v3");
         final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
-        
+
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(baseUrl)
                 .path("/content_types/entries")
