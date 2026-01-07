@@ -39,12 +39,12 @@ public class WebConfigResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Entry {
 
-        private String uid;
-        private String locale;
-
         
+        
+        @JsonProperty("title")
         private String title;
 
+        @JsonProperty("logo")
         private Asset logo;
 
         @JsonProperty("quick_links")
