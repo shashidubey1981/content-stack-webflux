@@ -46,6 +46,7 @@ public class PersonalizeConfigResponse {
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Audiences {
+        @JsonProperty("group")
         private List<Group> group;
     }
 
