@@ -16,8 +16,20 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true) // important: Contentstack adds extra fields often
 public class WebConfigResponse {
 
-    // ============ TOP LEVEL WRAPPER ============
-    private List<WebConfig> entries;
+    @JsonProperty("entries")
+    private List<Entry> entries;
+
+    @JsonProperty("count")
+    private Integer count;
+
+    // Explicit getters for Maven compilation
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
 
     
 
@@ -25,7 +37,7 @@ public class WebConfigResponse {
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class WebConfig {
+    public static class Entry {
 
         private String uid;
         private String locale;

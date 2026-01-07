@@ -12,16 +12,28 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true) // important: Contentstack adds extra fields often
 public class PersonalizeConfigResponse {
 
-    // ============ TOP LEVEL WRAPPER ============
-    private List<PersonalizeConfig> entries;
+
+    @JsonProperty("entries")
+    private List<Entry> entries;
+
+    @JsonProperty("count")
+    private Integer count;
+
+    // Explicit getters for Maven compilation
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
 
     
-
     // ============ ENTRY MODEL ============
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class PersonalizeConfig {
+    public static class Entry {
 
     @JsonProperty("audiences")
     private Audiences audiences;

@@ -29,7 +29,7 @@ public class ContentstackController {
     }
 
     @GetMapping("/web-config")
-    public Mono<ResponseEntity<WebConfigResponse.WebConfig>> getWebConfig(
+    public Mono<ResponseEntity<WebConfigResponse.Entry>> getWebConfig(
             @RequestParam String contentTypeUid,
             @RequestParam(required = false) String locale,
             @RequestParam(required = false) String variant) {
@@ -48,7 +48,7 @@ public class ContentstackController {
     }
 
     @GetMapping("/personalized-config")
-    public Mono<ResponseEntity<PersonalizeConfigResponse.PersonalizeConfig>> getPersonalizedConfig(
+    public Mono<ResponseEntity<PersonalizeConfigResponse.Entry>> getPersonalizedConfig(
             @RequestParam String contentTypeUid,
             @RequestParam(required = false) String locale,
             @RequestParam(required = false) String variant) {

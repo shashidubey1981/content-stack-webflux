@@ -45,7 +45,7 @@ public class ContentstackClientService {
                 .build();
     }
 
-    public Mono<WebConfigResponse.WebConfig> fetchWebConfig(
+    public Mono<WebConfigResponse.Entry> fetchWebConfig(
             String contentTypeUid,
             String locale,
             String variant) {
@@ -87,7 +87,7 @@ public class ContentstackClientService {
                         return Mono.error(new RuntimeException("No entries found in response"));
                     }
 
-                    WebConfigResponse.WebConfig firstEntry = response.getEntries().get(0);
+                    WebConfigResponse.Entry firstEntry = response.getEntries().get(0);
                     log.info("Found {} entries, using first entry", response.getEntries().size());
                     log.info("Successfully extracted web config entry");
                     return Mono.just(firstEntry);
@@ -97,7 +97,7 @@ public class ContentstackClientService {
     }
 
 
-    public Mono<PersonalizeConfigResponse.PersonalizeConfig> fetchPersonalizedConfig(
+    public Mono<PersonalizeConfigResponse.Entry> fetchPersonalizedConfig(
             String contentTypeUid,
             String locale,
             String variant) {
@@ -130,7 +130,7 @@ public class ContentstackClientService {
                         return Mono.error(new RuntimeException("No entries found in response"));
                     }
 
-                    PersonalizeConfigResponse.PersonalizeConfig firstEntry = response.getEntries().get(0);
+                    PersonalizeConfigResponse.Entry firstEntry = response.getEntries().get(0);
                     log.info("Found {} entries, using first entry", response.getEntries().size());
                     log.info("Successfully extracted personalized config entry");
                     return Mono.just(firstEntry);
