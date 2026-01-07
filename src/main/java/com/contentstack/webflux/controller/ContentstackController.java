@@ -2,10 +2,10 @@ package com.contentstack.webflux.controller;
 
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
 import com.contentstack.webflux.dto.EntryRequest;
+import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import com.contentstack.webflux.service.ContentstackClientService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contentstack")
@@ -30,12 +28,8 @@ public class ContentstackController {
         this.contentstackClientService = contentstackClientService;
     }
 
-    /**
-     * Fetch entries endpoint
-     * GET /api/contentstack/entries?contentTypeUid={uid}&locale={locale}&variant={variant}
-     */
     @GetMapping("/web-config")
-    public Mono<ResponseEntity<WebConfigResponse.WebConfig>> getEntries(
+    public Mono<ResponseEntity<WebConfigResponse.WebConfig>> getWebConfig(
             @RequestParam String contentTypeUid,
             @RequestParam(required = false) String locale,
             @RequestParam(required = false) String variant) {
@@ -52,6 +46,26 @@ public class ContentstackController {
                             .build());
                 });
     }
+
+    @GetMapping("/personalized-config")
+    public Mono<ResponseEntity<PersonalizeConfigResponse.PersonalizeConfig>> getPersonalizedConfig(
+            @RequestParam String contentTypeUid,
+            @RequestParam(required = false) String locale,
+            @RequestParam(required = false) String variant) {
+
+        log.info("Received request to fetch entries for content type: {}", contentTypeUid);
+
+        return contentstackClientService
+                .fetchPersonalizedConfig(contentTypeUid, locale, variant)
+                .map(ResponseEntity::ok)
+                .onErrorResume(error -> {
+                    log.error("Error processing entries request: {}", error.getMessage());
+                    return Mono.just(ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build());
+                });
+    }
+    
 
     /**
      * Fetch entries endpoint using POST with request body

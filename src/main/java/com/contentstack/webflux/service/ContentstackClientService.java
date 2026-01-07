@@ -2,6 +2,7 @@ package com.contentstack.webflux.service;
 
 import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
+import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.Objects;
 public class ContentstackClientService {
 
     private static final Logger log = LoggerFactory.getLogger(ContentstackClientService.class);
-    
+
     private final ContentstackConfig config;
     private final WebClient.Builder webClientBuilder;
 
@@ -67,15 +68,14 @@ public class ContentstackClientService {
             uriBuilder.queryParam("locale", locale);
         }
 
-        
 
         uriBuilder.queryParam("include[][]", ContentstackIncludes.QUICK_LINKS_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
-        
-        
+
+
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
-        
+
         return getWebClient()
                 .get()
                 .uri(uri)
@@ -86,7 +86,7 @@ public class ContentstackClientService {
                         log.warn("No entries found in response");
                         return Mono.error(new RuntimeException("No entries found in response"));
                     }
-                    
+
                     WebConfigResponse.WebConfig firstEntry = response.getEntries().get(0);
                     log.info("Found {} entries, using first entry", response.getEntries().size());
                     log.info("Successfully extracted web config entry");
@@ -94,6 +94,49 @@ public class ContentstackClientService {
                 })
                 .doOnSuccess(response -> log.info("Successfully fetched web config"))
                 .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
+    }
+
+
+    public Mono<PersonalizeConfigResponse.PersonalizeConfig> fetchPersonalizedConfig(
+            String contentTypeUid,
+            String locale,
+            String variant) {
+
+
+        final String baseUrl = Objects.requireNonNullElse(
+                (config.getApi() != null ? config.getApi().getBaseUrl() : null),
+                "https://api.contentstack.io/v3");
+        final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/content_types/{contentTypeUid}/entries");
+
+        // Add locale if provided
+        if (locale != null && !locale.isEmpty()) {
+            uriBuilder.queryParam("locale", locale);
+        }
+
+
+        String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(PersonalizeConfigResponse.class)
+                .flatMap(response -> {
+                    if (response == null || response.getEntries() == null || response.getEntries().isEmpty()) {
+                        log.warn("No entries found in response");
+                        return Mono.error(new RuntimeException("No entries found in response"));
+                    }
+
+                    PersonalizeConfigResponse.PersonalizeConfig firstEntry = response.getEntries().get(0);
+                    log.info("Found {} entries, using first entry", response.getEntries().size());
+                    log.info("Successfully extracted personalized config entry");
+                    return Mono.just(firstEntry);
+                })
+                .doOnSuccess(response -> log.info("Successfully fetched personalized config"))
+                .doOnError(error -> log.error("Error fetching personalized config: {}", error.getMessage(), error));
     }
 
     /**
