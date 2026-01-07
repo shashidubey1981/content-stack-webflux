@@ -2,6 +2,7 @@ package com.contentstack.webflux.service;
 
 import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
+import com.contentstack.webflux.dto.WebConfigResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -45,6 +46,46 @@ public class ContentstackClientService {
                 .build();
     }
 
+    public Mono<WebConfigResponse> fetchWebConfig(
+        String contentTypeUid,
+        String locale,
+        String variant) {
+
+    log.info("Fetching entries for content type: {}, locale: {}, variant: {}", 
+            contentTypeUid, locale, variant);
+
+    final String baseUrl = Objects.requireNonNullElse(
+            (config.getApi() != null ? config.getApi().getBaseUrl() : null),
+            "https://api.contentstack.io/v3");
+    final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
+    log.info("Environment: {}", environment);
+    log.info("Base URL: {}", baseUrl);
+    UriComponentsBuilder uriBuilder = UriComponentsBuilder
+            .fromUriString(baseUrl)
+            .path("/content_types/{contentTypeUid}/entries");
+
+    // Add locale if provided
+    if (locale != null && !locale.isEmpty()) {
+        uriBuilder.queryParam("locale", locale);
+    }
+
+    // Add variant if provided
+    if (variant != null && !variant.isEmpty()) {
+        uriBuilder.queryParam("variant", variant);
+    }
+
+    String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+    log.debug("Request URI: {}", uri);
+
+    return getWebClient()
+            .get()
+            .uri(uri)
+            .retrieve()
+            .bodyToMono(WebConfigResponse.class)
+            .doOnSuccess(response -> log.info("Successfully fetched web config"))
+            .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
+}
+
     /**
      * Fetch entries from Contentstack with support for variants and locale
      *
@@ -75,11 +116,11 @@ public class ContentstackClientService {
                 (config.getApi() != null ? config.getApi().getBaseUrl() : null),
                 "https://api.contentstack.io/v3");
         final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
-        
+        log.info("Environment: {}", environment);
+        log.info("Base URL: {}", baseUrl);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(baseUrl)
-                .path("/content_types/{contentTypeUid}/entries")
-                .queryParam("environment", environment);
+                .path("/content_types/{contentTypeUid}/entries");
 
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
@@ -106,23 +147,22 @@ public class ContentstackClientService {
                 uriBuilder.queryParam("exclude[]", field);
             }
         }
-
         // Add query parameters
-        if (query != null && !query.isEmpty()) {
-            query.forEach((key, value) -> {
-                if (value != null) {
-                    uriBuilder.queryParam(key, value);
-                }
-            });
-        }
+        // if (query != null && !query.isEmpty()) {
+        //     query.forEach((key, value) -> {
+        //         if (value != null) {
+        //             uriBuilder.queryParam(key, value);
+        //         }
+        //     });
+        // }
 
-        // Add pagination
-        if (skip != null) {
-            uriBuilder.queryParam("skip", skip);
-        }
-        if (limit != null) {
-            uriBuilder.queryParam("limit", limit);
-        }
+        // // Add pagination
+        // if (skip != null) {
+        //     uriBuilder.queryParam("skip", skip);
+        // }
+        // if (limit != null) {
+        //     uriBuilder.queryParam("limit", limit);
+        // }
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);

@@ -2,6 +2,7 @@ package com.contentstack.webflux.controller;
 
 import com.contentstack.webflux.dto.ContentstackEntryResponse;
 import com.contentstack.webflux.dto.EntryRequest;
+import com.contentstack.webflux.dto.WebConfigResponse;
 import com.contentstack.webflux.service.ContentstackClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,21 +34,16 @@ public class ContentstackController {
      * Fetch entries endpoint
      * GET /api/contentstack/entries?contentTypeUid={uid}&locale={locale}&variant={variant}
      */
-    @GetMapping("/entries")
-    public Mono<ResponseEntity<ContentstackEntryResponse>> getEntries(
+    @GetMapping("/web-config")
+    public Mono<ResponseEntity<WebConfigResponse>> getEntries(
             @RequestParam String contentTypeUid,
             @RequestParam(required = false) String locale,
-            @RequestParam(required = false) String variant,
-            @RequestParam(required = false) List<String> include,
-            @RequestParam(required = false) List<String> exclude,
-            @RequestParam(required = false) Map<String, Object> query,
-            @RequestParam(required = false) Integer skip,
-            @RequestParam(required = false) Integer limit) {
+            @RequestParam(required = false) String variant) {
 
         log.info("Received request to fetch entries for content type: {}", contentTypeUid);
 
         return contentstackClientService
-                .fetchEntries(contentTypeUid, locale, variant, include, exclude, query, skip, limit)
+                .fetchWebConfig(contentTypeUid, locale, variant)
                 .map(ResponseEntity::ok)
                 .onErrorResume(error -> {
                     log.error("Error processing entries request: {}", error.getMessage());

@@ -22,12 +22,36 @@ public class ContentstackConfig {
         return apiKey;
     }
 
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
     public String getDeliveryToken() {
         return deliveryToken;
     }
 
+    public void setDeliveryToken(String deliveryToken) {
+        this.deliveryToken = deliveryToken;
+    }
+
     public String getEnvironment() {
         return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setApi(Api api) {
+        this.api = api;
     }
 
     @Data
@@ -36,6 +60,10 @@ public class ContentstackConfig {
         
         public String getBaseUrl() {
             return baseUrl;
+        }
+
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
         }
     }
 }
