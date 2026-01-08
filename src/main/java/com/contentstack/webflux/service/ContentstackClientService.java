@@ -146,11 +146,6 @@ public class ContentstackClientService {
      * @param locale         Locale code (e.g., "en-us")
      * @param variant        Variant name
      * @param include        Fields to include
-     * @param exclude        Fields to exclude
-     * @param query          Query parameters
-     * @param skip           Skip count for pagination
-     * @param limit          Limit count for pagination
-     * @return Mono of ContentstackEntryResponse
      */
     public Mono<ContentstackPageResponse> fetchEntries(
             String contentTypeUid,
@@ -195,53 +190,4 @@ public class ContentstackClientService {
                         response.getCount() != null ? response.getCount() : 0, contentTypeUid, locale, variant))
                 .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
     }
-
-    /**
-     * Fetch entry by URL from Contentstack
-     *
-     * @param url     URL of the entry
-     * @param locale  Locale code (e.g., "en-us")
-     * @param variant Variant name
-     * @return Mono of ContentstackEntryResponse
-     */
-    public Mono<ContentstackPageResponse> fetchEntryByUrl(
-            String url,
-            String locale,
-            String variant) {
-
-        log.info("Fetching entry by URL: {}, locale: {}, variant: {}", url, locale, variant);
-
-        final String baseUrl = Objects.requireNonNullElse(
-                (config.getApi() != null ? config.getApi().getBaseUrl() : null),
-                "https://api.contentstack.io/v3");
-        final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
-
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString(baseUrl)
-                .path("/content_types/entries")
-                .queryParam("environment", environment)
-                .queryParam("url", url);
-
-        // Add locale if provided
-        if (locale != null && !locale.isEmpty()) {
-            uriBuilder.queryParam("locale", locale);
-        }
-
-        // Add variant if provided
-        if (variant != null && !variant.isEmpty()) {
-            uriBuilder.queryParam("variant", variant);
-        }
-
-        String uri = uriBuilder.build().toUriString();
-        log.debug("Request URI: {}", uri);
-
-        return getWebClient()
-                .get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(ContentstackPageResponse.class)
-                .doOnSuccess(response -> log.info("Successfully fetched entry by URL: {}", url))
-                .doOnError(error -> log.error("Error fetching entry by URL: {}", error.getMessage()));
-    }
 }
-

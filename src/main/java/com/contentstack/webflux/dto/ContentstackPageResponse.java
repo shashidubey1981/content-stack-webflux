@@ -47,7 +47,7 @@ public class ContentstackPageResponse {
         @JsonProperty("components")
         private List<PageBlock> components;
         @JsonProperty("hero")
-        private Hero hero;
+        private List<Hero> hero;
 
     }
 
@@ -78,34 +78,11 @@ public class ContentstackPageResponse {
         @JsonProperty("pgp_collection")
         private PGPCardCollection pgpCollection;
 
-        @JsonProperty("quick_links")
-        private QuickLinks quickLinks;
-
         @JsonProperty("image_preset")
         private Image imagePreset;
 
         @JsonProperty("seo")
         private SeoProps seo;
-    }
-
-    // ======================= QUICK LINKS =======================
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class QuickLinks {
-        private String id;
-        private String title;
-        private List<QuickLinkCategory> items;
-        private List<String> slug;
-    }
-
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class QuickLinkCategory {
-        @JsonProperty("link_text")
-        private String linkText;
-        private String link;
     }
 
     // ======================= PGP COLLECTION =======================
@@ -239,9 +216,6 @@ public class ContentstackPageResponse {
         @JsonProperty("heading")
         private String heading;
         
-        @JsonProperty("content")
-        private String content;
-        
         @JsonProperty("cta")
         private List<CTA> cta;
         
@@ -253,9 +227,6 @@ public class ContentstackPageResponse {
         
         @JsonProperty("styles")
         private Styles styles;
-
-        @JsonProperty("isABEnabled")
-        private Boolean isABEnabled;
 
         @JsonProperty("summary")
         private String summary;
@@ -269,11 +240,6 @@ public class ContentstackPageResponse {
         @JsonProperty("cover_image")
         private Asset coverImage;
 
-        @JsonProperty("locale")
-        private String locale;
-        
-        @JsonProperty("className")
-        private String className;
     }
 
     @Data
