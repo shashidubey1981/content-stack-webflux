@@ -11,7 +11,7 @@ public final class ContentstackIncludes {
     private ContentstackIncludes() {}
 
     // ================= DYNAMIC CONTENT =================
-    public static final List<String> DYNAMIC_COMPONENT_REFERENCEINCLUDES = List.of(
+    public static final List<String> DYNAMIC_COMPONENT_REFERENCE_INCLUDES = List.of(
         "dynamic_component"
         
 );
@@ -113,6 +113,7 @@ public final class ContentstackIncludes {
 
     public static final List<String> WEB_LANDING_PAGE_REFERENCE_INCLUDES =
             concat(
+                    DYNAMIC_COMPONENT_REFERENCE_INCLUDES,
                     HERO_REFERENCE_INCLUDES,
                     TEASER_REFERENCE_INCLUDES,
                     TEXT_AND_IMAGE_REFERENCE_INCLUDES,
