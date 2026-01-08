@@ -48,6 +48,8 @@ public class ContentstackPageResponse {
         private List<PageBlock> components;
         @JsonProperty("hero")
         private List<Hero> hero;
+        @JsonProperty("seo")
+        private SeoProps seo;
 
     }
 
@@ -81,8 +83,6 @@ public class ContentstackPageResponse {
         @JsonProperty("image_preset")
         private Image imagePreset;
 
-        @JsonProperty("seo")
-        private SeoProps seo;
     }
 
     // ======================= PGP COLLECTION =======================
@@ -406,24 +406,9 @@ public class ContentstackPageResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SeoProps {
+        @JsonProperty("title")
         private String title;
-        private String url;
-        private Seo seo;
-        private String summary;
-        private String locale;
-        private String uid;
-
-        // TS has contentType; in JSON it may come as content_type_uid or similar
-        private String contentType;
-
-        private List<LocaleItem> locales;
-    }
-
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Seo {
-        private String title;
+        @JsonProperty("description")
         private String description;
 
         @JsonProperty("canonical_url")
