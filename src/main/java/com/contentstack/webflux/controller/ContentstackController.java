@@ -72,7 +72,7 @@ public class ContentstackController {
      * GET /api/contentstack/entries/url?url={url}&locale={locale}&variant={variant}
      */
     @GetMapping("/entries")
-    public Mono<ResponseEntity<ContentstackPageResponse>> getEntryByUrl(
+    public Mono<ResponseEntity<ContentstackPageResponse.Entry>> getEntryByUrl(
         @RequestParam String contentTypeUid,
         @RequestParam(required = false) String locale,
         @RequestParam(required = false) String variant) {

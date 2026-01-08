@@ -147,7 +147,7 @@ public class ContentstackClientService {
      * @param variant        Variant name
      * @param include        Fields to include
      */
-    public Mono<ContentstackPageResponse> fetchEntries(
+    public Mono<ContentstackPageResponse.Entry> fetchEntries(
             String contentTypeUid,
             String locale,
             String variant) {
@@ -186,8 +186,18 @@ public class ContentstackClientService {
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(ContentstackPageResponse.class)
-                .doOnSuccess(response -> log.info("Successfully fetched {} {} entries for content type: {}",
-                        response.getCount() != null ? response.getCount() : 0, contentTypeUid, locale, variant))
-                .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
+                .flatMap(response -> {
+                    if (response == null || response.getEntries() == null || response.getEntries().isEmpty()) {
+                        log.warn("No entries found in response");
+                        return Mono.error(new RuntimeException("No entries found in response"));
+                    }
+
+                    ContentstackPageResponse.Entry firstEntry = response.getEntries().get(0);
+                    log.info("Found {} entries, using first entry", response.getEntries().size());
+                    log.info("Successfully extracted page entry");
+                    return Mono.just(firstEntry);
+                })
+                .doOnSuccess(response -> log.info("Successfully fetched entries for content type: {}", contentTypeUid))
+                .doOnError(error -> log.error("Error fetching entries for content type: {}: {}", contentTypeUid, error.getMessage(), error));
     }
 }

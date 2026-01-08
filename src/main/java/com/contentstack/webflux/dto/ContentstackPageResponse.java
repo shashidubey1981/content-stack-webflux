@@ -266,6 +266,7 @@ public class ContentstackPageResponse {
         @JsonProperty("carousel_items")
         private List<TextAndImage> carouselItems;
 
+        @JsonProperty("styles")
         private Styles styles;
     }
 
@@ -274,24 +275,23 @@ public class ContentstackPageResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextAndImage {
         private String id;
+        
+        @JsonProperty("heading")
         private String heading;
-        private String content;
-
+        
         // from Image
+        @JsonProperty("image")
         private Asset image;
-        @JsonProperty("cover_image")
-        private Asset coverImage;
-        @JsonProperty("image_alt_text")
-        private String imageAltText;
-        private String image_position;
-        private Boolean is_thumbnail;
-        private String alt;
 
         // item extras
+        @JsonProperty("cta")
         private List<CTA> cta;
+        
+        @JsonProperty("styles")
         private Styles styles;
 
         // icon uses Image['image'] in TS
+        @JsonProperty("icon")
         private Asset icon;
     }
 
