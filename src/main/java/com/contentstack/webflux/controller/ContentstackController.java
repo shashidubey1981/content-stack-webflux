@@ -1,11 +1,9 @@
 package com.contentstack.webflux.controller;
 
 import com.contentstack.webflux.dto.ContentstackPageResponse;
-import com.contentstack.webflux.dto.EntryRequest;
 import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import com.contentstack.webflux.service.ContentstackClientService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,13 +72,13 @@ public class ContentstackController {
     @GetMapping("/entries")
     public Mono<ResponseEntity<ContentstackPageResponse.Entry>> getEntryByUrl(
         @RequestParam String contentTypeUid,
-        @RequestParam(required = false) String locale,
-        @RequestParam(required = false) String variant) {
+        @RequestParam(required = true) String locale,
+        @RequestParam(required = false) String personalizedVariant) {
 
         log.info("Received request to fetch entries for content type: {}", contentTypeUid);
 
         return contentstackClientService
-                .fetchEntries(contentTypeUid, locale, variant)
+                .fetchEntries(contentTypeUid, locale, personalizedVariant)
                 .map(ResponseEntity::ok)
                 .onErrorResume(error -> {
                     log.error("Error processing entry by URL request: {}", error.getMessage());
