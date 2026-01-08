@@ -1,7 +1,7 @@
 package com.contentstack.webflux.service;
 
 import com.contentstack.webflux.config.ContentstackConfig;
-import com.contentstack.webflux.dto.ContentstackEntryResponse;
+import com.contentstack.webflux.dto.ContentstackPageResponse;
 import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import org.slf4j.Logger;
@@ -152,15 +152,10 @@ public class ContentstackClientService {
      * @param limit          Limit count for pagination
      * @return Mono of ContentstackEntryResponse
      */
-    public Mono<ContentstackEntryResponse> fetchEntries(
+    public Mono<ContentstackPageResponse> fetchEntries(
             String contentTypeUid,
             String locale,
-            String variant,
-            List<String> include,
-            List<String> exclude,
-            Map<String, Object> query,
-            Integer skip,
-            Integer limit) {
+            String variant) {
 
         log.info("Fetching entries for content type: {}, locale: {}, variant: {}",
                 contentTypeUid, locale, variant);
@@ -186,37 +181,8 @@ public class ContentstackClientService {
         }
 
         // Add include fields
-        if (include != null && !include.isEmpty()) {
-            String[] includeArray = include.toArray(new String[0]);
-            for (String field : includeArray) {
-                uriBuilder.queryParam("include[]", field);
-            }
-        }
-
-        // Add exclude fields
-        if (exclude != null && !exclude.isEmpty()) {
-            String[] excludeArray = exclude.toArray(new String[0]);
-            for (String field : excludeArray) {
-                uriBuilder.queryParam("exclude[]", field);
-            }
-        }
-        // Add query parameters
-        // if (query != null && !query.isEmpty()) {
-        //     query.forEach((key, value) -> {
-        //         if (value != null) {
-        //             uriBuilder.queryParam(key, value);
-        //         }
-        //     });
-        // }
-
-        // // Add pagination
-        // if (skip != null) {
-        //     uriBuilder.queryParam("skip", skip);
-        // }
-        // if (limit != null) {
-        //     uriBuilder.queryParam("limit", limit);
-        // }
-
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_LANDING_PAGE_REFERENCE_INCLUDES);
+        
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);
 
@@ -224,9 +190,9 @@ public class ContentstackClientService {
                 .get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(ContentstackEntryResponse.class)
-                .doOnSuccess(response -> log.info("Successfully fetched {} entries",
-                        response.getCount() != null ? response.getCount() : 0))
+                .bodyToMono(ContentstackPageResponse.class)
+                .doOnSuccess(response -> log.info("Successfully fetched {} {} entries for content type: {}",
+                        response.getCount() != null ? response.getCount() : 0, contentTypeUid, locale, variant))
                 .doOnError(error -> log.error("Error fetching entries: {}", error.getMessage()));
     }
 
@@ -238,7 +204,7 @@ public class ContentstackClientService {
      * @param variant Variant name
      * @return Mono of ContentstackEntryResponse
      */
-    public Mono<ContentstackEntryResponse> fetchEntryByUrl(
+    public Mono<ContentstackPageResponse> fetchEntryByUrl(
             String url,
             String locale,
             String variant) {
@@ -273,7 +239,7 @@ public class ContentstackClientService {
                 .get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(ContentstackEntryResponse.class)
+                .bodyToMono(ContentstackPageResponse.class)
                 .doOnSuccess(response -> log.info("Successfully fetched entry by URL: {}", url))
                 .doOnError(error -> log.error("Error fetching entry by URL: {}", error.getMessage()));
     }

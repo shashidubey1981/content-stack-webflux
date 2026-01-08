@@ -53,14 +53,19 @@ public class PersonalizeConfigResponse {
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Group {
+        @JsonProperty("name")
         private String name;
+        @JsonProperty("attributes")
         private List<Attributes> attributes;
     }
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Attributes {
+        
+        @JsonProperty("key")
         private String key;
+        @JsonProperty("value")
         private String value;
     }
 

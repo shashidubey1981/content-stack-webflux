@@ -111,6 +111,17 @@ public final class ContentstackIncludes {
                     USER_FORM_JSON_RTE_PATHS
             );
 
+    public static final List<String> WEB_LANDING_PAGE_REFERENCE_INCLUDES =
+            concat(
+                    HERO_REFERENCE_INCLUDES,
+                    TEASER_REFERENCE_INCLUDES,
+                    TEXT_AND_IMAGE_REFERENCE_INCLUDES,
+                    IMAGE_CARDS_REFERENCE_INCLUDES,
+                    FEATURED_ARTICLES_REFERENCE_INCLUDES,
+                    QUICK_LINKS_REFERENCE_INCLUDES,
+                    TEXT_JSON_RTE_PATHS
+            );        
+
     // ================= UTIL =================
     @SafeVarargs
     private static List<String> concat(List<String>... lists) {
