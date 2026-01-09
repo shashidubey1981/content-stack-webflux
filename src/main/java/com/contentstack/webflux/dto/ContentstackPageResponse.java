@@ -53,11 +53,6 @@ public class ContentstackPageResponse {
 
     }
 
-    // ======================= COMPONENT BLOCK (one-of) =======================
-    /**
-     * Each element generally looks like:
-     * { "teaser": {...} } OR { "text": {...} } OR { "card_collection": {...} }
-     */
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -90,38 +85,31 @@ public class ContentstackPageResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PGPCardCollection {
-        private String id;
+        @JsonProperty("header")
+        private CardCollectionHeader header;
+        @JsonProperty("cards")
         private List<PGPImageCardItem> cards;
-        private Integer count;
-        private String editKey;
-        private String className;
+        
     }
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PGPImageCardItem {
-        private Object id;     // string|number
-        private Object key;    // string|number
-        private Integer count;
-        private Object index;  // any
-
-        // Image
+        @JsonProperty("contnet")
+        private String content;
+        @JsonProperty("cta")
+        private PGPCTA cta;
+        @JsonProperty("image")
         private Asset image;
-        @JsonProperty("cover_image")
-        private Asset coverImage;
         @JsonProperty("image_alt_text")
         private String imageAltText;
-        private String image_position;
-        private Boolean is_thumbnail;
-        private String alt;
-
-        // Text
+        @JsonProperty("is_thumbnail")
+        private Boolean isThumbnail;
+        @JsonProperty("title")
         private String title;
+        @JsonProperty("subtitle")
         private String subtitle;
-        private PGPCTA cta;
-        private String url;
-        private String summary;
     }
 
     // ======================= CARD COLLECTION =======================
@@ -129,13 +117,18 @@ public class ContentstackPageResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CardCollection {
+        @JsonProperty("header")
         private CardCollectionHeader header;
 
         // body fields
         private String id;
+        @JsonProperty("cards")
         private List<ImageCardItem> cards;
+        @JsonProperty("count")
         private Integer count;
+        @JsonProperty("edit_key")
         private String editKey;
+        @JsonProperty("class_name")
         private String className;
     }
 
@@ -144,10 +137,16 @@ public class ContentstackPageResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CardCollectionHeader {
         private String id;
+        @JsonProperty("heading")
         private String heading;
-
+        @JsonProperty("content")
+        private String content;
         @JsonProperty("sub_heading")
         private String subHeading;
+        @JsonProperty("class_name")
+        private String className;
+        @JsonProperty("cta")
+        private CTA cta;
     }
 
     @Data
@@ -165,16 +164,23 @@ public class ContentstackPageResponse {
         private Asset coverImage;
         @JsonProperty("image_alt_text")
         private String imageAltText;
-        private String image_position;
-        private Boolean is_thumbnail;
+        @JsonProperty("image_position")
+        private String imagePosition;
+        @JsonProperty("is_thumbnail")
+        private Boolean isThumbnail;
+        @JsonProperty("alt")
         private String alt;
 
         // Text
+        @JsonProperty("title")
         private String title;
+        @JsonProperty("subtitle")
         private String subtitle;
-        private String content;
+        @JsonProperty("cta")
         private CTA cta;
+        @JsonProperty("url")
         private String url;
+        @JsonProperty("summary")
         private String summary;
     }
 
@@ -195,15 +201,21 @@ public class ContentstackPageResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Teaser {
         private String id;
+        @JsonProperty("heading")
         private String heading;
+        @JsonProperty("content")
         private String content;
+        @JsonProperty("cta")
         private List<CTA> cta;
+        @JsonProperty("image")
         private List<Image> image;
+        @JsonProperty("video")
         private Video video;
 
         @JsonProperty("isABEnabled")
         private Boolean isABEnabled;
 
+        @JsonProperty("styles")
         private Styles styles;
     }
 
@@ -313,11 +325,12 @@ public class ContentstackPageResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CTA {
+        
+        @JsonProperty("text")
         private String text;
-
         @JsonProperty("external_url")
         private String externalUrl;
-
+        @JsonProperty("link")
         private List<InternalLink> link;
     }
 
@@ -325,9 +338,10 @@ public class ContentstackPageResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PGPCTA {
+        @JsonProperty("text")
         private String text;
-        private String url;
-        private List<InternalLink> link;
+        @JsonProperty("link")
+        private String link;
     }
 
     @Data
