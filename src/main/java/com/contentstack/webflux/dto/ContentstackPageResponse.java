@@ -75,9 +75,20 @@ public class ContentstackPageResponse {
         @JsonProperty("pgp_collection")
         private PGPCardCollection pgpCollection;
 
+        @JsonProperty("quick_links")
+        private QuickLinks quickLinks;
+
         @JsonProperty("image_preset")
         private Image imagePreset;
 
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class QuickLinks {
+        @JsonProperty("title")
+        private String title;
     }
 
     // ======================= PGP COLLECTION =======================
