@@ -120,7 +120,7 @@ public class ContentstackClientService {
 
 
         uriBuilder.queryParam("include[][]", ContentstackIncludes.NAVIGATION_CONFIG_REFERENCE_INCLUDES);
-
+        
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
 

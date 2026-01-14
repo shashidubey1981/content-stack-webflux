@@ -1,15 +1,12 @@
 package com.contentstack.webflux.dto;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,9 +39,6 @@ public class NavigationResponse {
         @JsonProperty("header")
         private List<Navigation> header;
 
-        @JsonProperty("footer_navigation")
-        private List<Menu> footerNavigation;
-
     
     }
 
@@ -53,8 +47,10 @@ public class NavigationResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Navigation {
+        @JsonProperty("title")
+        private String title;
         @JsonProperty("items")
-        public List<NavItems> items;
+        private List<NavItems> items;
     }
 
     @Data
@@ -66,56 +62,42 @@ public class NavigationResponse {
         public String text;
 
         @JsonProperty("mega_menu")
-        public List<MegaMenu> megaMenu;
+        private MegaMenu megaMenu;
     }
 
-    // ============ MEGA MENU ============
+    // ========= MEGA MENU =========
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MegaMenu {
-    
+
         @JsonProperty("sections")
-        public List<MegaMenuSection> sections;
-        
-        @JsonProperty("sub_sections")
-        public List<MegaMenuSubSection> subSections;
+        private Section sections;
     }
 
+    // ========= SECTION =========
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MegaMenuSection {
-        
-        @JsonProperty("links")
-        public List<SectionLink> links;
+    public static class Section {
 
+        @JsonProperty("links")
+        private List<SectionLink> links;
     }
 
+    // ========= LINK =========
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SectionLink {
-        
-        @JsonProperty("link_text")
-        private String linkText;
 
         @JsonProperty("link")
-        public String link;
+        private String link;
 
-    }
-
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MegaMenuSubSection {
-        
         @JsonProperty("link_text")
         private String linkText;
-
-        @JsonProperty("link")
-        public String link;
     }
+
 
     // ============ FOOTER MENU (your sample footer_navigation items are content_type "menu") ============
     @Data

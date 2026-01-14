@@ -56,7 +56,8 @@ public final class ContentstackIncludes {
             "header.items.mega_menu",
             "header.items.mega_menu.sections",
             "header.items.mega_menu.sections.links",
-            "header.items.mega_menu.sub_sections"
+            "header.items.mega_menu.sub_sections",
+            "header.items.mega_menu.sub_sections.links"
     );
 
     // ================= FOOTER =================
