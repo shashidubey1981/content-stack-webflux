@@ -4,6 +4,7 @@ import com.contentstack.webflux.config.ContentstackConfig;
 import com.contentstack.webflux.dto.ContentstackPageResponse;
 import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
+import com.contentstack.webflux.dto.NavigationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -69,9 +70,7 @@ public class ContentstackClientService {
         }
 
 
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.QUICK_LINKS_REFERENCE_INCLUDES);
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
 
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
@@ -90,6 +89,56 @@ public class ContentstackClientService {
                     WebConfigResponse.Entry firstEntry = response.getEntries().get(0);
                     log.info("Found {} entries, using first entry", response.getEntries().size());
                     log.info("Successfully extracted web config entry");
+                    return Mono.just(firstEntry);
+                })
+                .doOnSuccess(response -> log.info("Successfully fetched web config"))
+                .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
+    }
+
+    public Mono<NavigationResponse.Entry> fetchNavigationConfig(
+            String contentTypeUid,
+            String locale,
+            String variant) {
+
+        log.info("Fetching navigation config for content type: {}, locale: {}, variant: {}",
+                contentTypeUid, locale, variant);
+
+        final String baseUrl = Objects.requireNonNullElse(
+                (config.getApi() != null ? config.getApi().getBaseUrl() : null),
+                "https://api.contentstack.io/v3");
+        final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
+        log.info("Environment: {}", environment);
+        log.info("Base URL: {}", baseUrl);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/content_types/{contentTypeUid}/entries");
+
+        // Add locale if provided
+        if (locale != null && !locale.isEmpty()) {
+            uriBuilder.queryParam("locale", locale);
+        }
+
+
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
+
+
+        String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(NavigationResponse.class)
+                .flatMap(response -> {
+                    if (response == null || response.getEntries() == null || response.getEntries().isEmpty()) {
+                        log.warn("No entries found in response");
+                        return Mono.error(new RuntimeException("No entries found in response"));
+                    }
+
+                    NavigationResponse.Entry firstEntry = response.getEntries().get(0);
+                    log.info("Found {} entries, using first entry", response.getEntries().size());
+                    log.info("Successfully extracted navigation config entry");
                     return Mono.just(firstEntry);
                 })
                 .doOnSuccess(response -> log.info("Successfully fetched web config"))
@@ -177,7 +226,7 @@ public class ContentstackClientService {
 
         // Add include fields
         uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_LANDING_PAGE_REFERENCE_INCLUDES);
-        
+
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);
 

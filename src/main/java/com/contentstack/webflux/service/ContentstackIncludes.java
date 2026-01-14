@@ -8,14 +8,15 @@ import java.util.List;
  */
 public final class ContentstackIncludes {
 
-    private ContentstackIncludes() {}
+    private ContentstackIncludes() {
+    }
 
     // ================= DYNAMIC CONTENT =================
     public static final List<String> DYNAMIC_COMPONENT_REFERENCE_INCLUDES = List.of(
-        "dynamic_component"
-        
-);
-    
+            "dynamic_component"
+
+    );
+
     // ================= HERO =================
     public static final List<String> HERO_REFERENCE_INCLUDES = List.of(
             "hero",
@@ -50,14 +51,14 @@ public final class ContentstackIncludes {
     );
     // ================= NAVIGATION =================
     public static final List<String> NAVIGATION_REFERENCE_INCLUDES = List.of(
-            "main_navigation",
-            "main_navigation.items",
-            "main_navigation.items.link",
-            "main_navigation.items.mega_menu",
-            "main_navigation.items.mega_menu.sections",
-            "main_navigation.items.mega_menu.sections.link",
-            "main_navigation.items.mega_menu.sections.links",
-            "main_navigation.items.mega_menu.sections.links.link"
+            "header",
+            "header.items",
+            "header.items.link",
+            "header.items.mega_menu",
+            "header.items.mega_menu.sections",
+            "header.items.mega_menu.sections.link",
+            "header.items.mega_menu.sections.links",
+            "header.items.mega_menu.sections.links.link"
     );
 
     // ================= FOOTER =================
@@ -105,6 +106,13 @@ public final class ContentstackIncludes {
                     USER_FORM_REFERENCE_INCLUDES
             );
 
+    public static final List<String> NAVIGATION_CONFIG_REFERENCE_INCLUDES =
+            concat(
+                    NAVIGATION_REFERENCE_INCLUDES,
+                    FOOTER_REFERENCE_INCLUDES,
+                    USER_FORM_REFERENCE_INCLUDES
+            );
+
     public static final List<String> WEB_CONFIG_JSON_RTE_PATHS =
             concat(
                     FOOTER_JSON_RTE_PATHS,
@@ -121,7 +129,7 @@ public final class ContentstackIncludes {
                     FEATURED_ARTICLES_REFERENCE_INCLUDES,
                     QUICK_LINKS_REFERENCE_INCLUDES,
                     TEXT_JSON_RTE_PATHS
-            );        
+            );
 
     // ================= UTIL =================
     @SafeVarargs

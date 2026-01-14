@@ -238,6 +238,9 @@ public class ContentstackPageResponse {
         
         @JsonProperty("heading")
         private String heading;
+
+        @JsonProperty("content")
+        private String content;
         
         @JsonProperty("cta")
         private List<CTA> cta;
@@ -374,6 +377,7 @@ public class ContentstackPageResponse {
     public static class Image {
         private Object id; // string|number
 
+        @JsonProperty("image")
         private Asset image;
 
         @JsonProperty("cover_image")
@@ -405,16 +409,19 @@ public class ContentstackPageResponse {
         @JsonProperty("content_type")
         private String contentType;
 
+        @JsonProperty("dimension")
         private Dimension dimension;
 
         @JsonProperty("file_size")
         private String fileSize;
 
+        @JsonProperty("filename")
         private String filename;
 
         @JsonProperty("is_dir")
         private Boolean isDir;
 
+        @JsonProperty("url")
         private String url;
     }
 
