@@ -61,10 +61,9 @@ public class NavigationResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NavItems {
+        
+        @JsonProperty("text")
         public String text;
-
-        // In your sample: "link": [] OR array of referenced entries
-        public List<InternalLinkRef> link;
 
         @JsonProperty("mega_menu")
         public List<MegaMenu> megaMenu;
@@ -76,75 +75,46 @@ public class NavigationResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MegaMenu {
     
-        private List<MegaMenuSection> sections;
-        @JsonProperty("cta_group")
-        private List<CtaGroup> ctaGroup;
-        private String title;
-    }
-
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class CtaGroup {
-        @JsonProperty("call_to_action")
-        private List<CallToAction> callToAction;
+        @JsonProperty("sections")
+        public List<MegaMenuSection> sections;
+        
+        @JsonProperty("sub_sections")
+        public List<MegaMenuSubSection> subSections;
     }
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MegaMenuSection {
-        private String title;
+        
+        @JsonProperty("links")
+        public List<SectionLink> links;
 
-        // In sample: link is [] (but keep it)
-        private List<InternalLinkRef> link;
-
-        // In sample: links is array of objects with text, thumbnail, link, link_text...
-        private List<SectionLink> links;
-
-        // Dynamic keys (future-proofing)
-        private Map<String, Object> dynamic = new HashMap<>();
-
-        @JsonAnySetter
-        public void setDynamic(String key, Object value) {
-            // Avoid overriding known fields
-            if (!"title".equals(key) && !"link".equals(key) && !"links".equals(key)) {
-                dynamic.put(key, value);
-            }
-        }
-    }
-
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class CallToAction {
-        private Asset icon;
-        private String text;
-
-        @JsonProperty("internal_link")
-        private List<InternalLinkRef> internalLink;
-
-        @JsonProperty("external_link")
-        private String externalLink;
     }
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SectionLink {
-        private String text;
-        private Asset thumbnail;
-
-        // NOTE: in sample link[] contains referenced entry objects with url/title etc
-        private List<InternalLinkRef> link;
-
+        
         @JsonProperty("link_text")
         private String linkText;
 
-        private String url;
+        @JsonProperty("link")
+        public String link;
 
-        @JsonProperty("external_link")
-        private String externalLink;
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class MegaMenuSubSection {
+        
+        @JsonProperty("link_text")
+        private String linkText;
+
+        @JsonProperty("link")
+        public String link;
     }
 
     // ============ FOOTER MENU (your sample footer_navigation items are content_type "menu") ============

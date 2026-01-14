@@ -53,12 +53,10 @@ public final class ContentstackIncludes {
     public static final List<String> NAVIGATION_REFERENCE_INCLUDES = List.of(
             "header",
             "header.items",
-            "header.items.link",
             "header.items.mega_menu",
             "header.items.mega_menu.sections",
-            "header.items.mega_menu.sections.link",
             "header.items.mega_menu.sections.links",
-            "header.items.mega_menu.sections.links.link"
+            "header.items.mega_menu.sub_sections"
     );
 
     // ================= FOOTER =================

@@ -119,8 +119,7 @@ public class ContentstackClientService {
         }
 
 
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_JSON_RTE_PATHS);
+        uriBuilder.queryParam("include[][]", ContentstackIncludes.NAVIGATION_CONFIG_REFERENCE_INCLUDES);
 
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
@@ -141,8 +140,8 @@ public class ContentstackClientService {
                     log.info("Successfully extracted navigation config entry");
                     return Mono.just(firstEntry);
                 })
-                .doOnSuccess(response -> log.info("Successfully fetched web config"))
-                .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
+                .doOnSuccess(response -> log.info("Successfully fetched navigation config"))
+                .doOnError(error -> log.error("Error fetching navigation config: {}", error.getMessage(), error));
     }
 
 
