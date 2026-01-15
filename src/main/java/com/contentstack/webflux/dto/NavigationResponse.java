@@ -73,6 +73,10 @@ public class NavigationResponse {
         private String text;
         @JsonProperty("link")
         private String link;
+        @JsonProperty("background_color")
+        private String backgroundColor;
+        @JsonProperty("font_color")
+        private String fontColor;
     }
     // ========= NAVIGATION ITEMS =========
 

@@ -1,132 +1,183 @@
-# Content Stack WebFlux Application
+# Content Stack WebFlux
 
-A Spring Boot WebFlux application for integrating with Contentstack CMS. This application provides REST APIs to fetch content entries from Contentstack, with support for variants and locales.
+A Spring Boot WebFlux-based Backend for Frontend (BFF) application that provides a reactive API layer for integrating with Contentstack CMS. This application serves as an intermediary between frontend applications and Contentstack's Content Delivery API, offering optimized endpoints for web configuration, navigation, personalized content, and page entries.
 
 ## Features
 
-- **Fetch Entries**: Retrieve content entries by content type with support for variants and locales
-- **Fetch Entry by URL**: Retrieve a specific entry using its URL
-- **Reactive Programming**: Built with Spring WebFlux for non-blocking, reactive operations
-- **CORS Enabled**: Configured to work with Next.js frontend applications
-- **Comprehensive Error Handling**: Global exception handling for better error responses
+- **Reactive Architecture**: Built with Spring WebFlux for non-blocking, asynchronous request handling
+- **Contentstack Integration**: Seamless integration with Contentstack Content Delivery API
+- **Multiple Content Types Support**: 
+  - Web configuration
+  - Navigation configuration
+  - Personalized configuration
+  - Page entries with URL-based lookup
+- **Localization Support**: Multi-locale content retrieval
+- **Personalization**: Support for personalized variants
+- **Health Monitoring**: Built-in actuator endpoints for health checks and metrics
+- **Global Exception Handling**: Centralized error handling
+- **CORS Support**: Cross-origin resource sharing enabled
+
+## Technology Stack
+
+- **Java**: 17
+- **Spring Boot**: 3.2.0
+- **Spring WebFlux**: Reactive web framework
+- **Project Reactor**: Reactive programming library
+- **Lombok**: Reduces boilerplate code
+- **Jackson**: JSON processing
+- **Spring Boot Actuator**: Application monitoring and management
 
 ## Prerequisites
 
 - Java 17 or higher
-- Maven 3.6 or higher
-- Contentstack API credentials (API Key, Delivery Token, Environment)
+- Maven 3.6+
+- Contentstack account with API credentials
 
 ## Configuration
 
-Configure the application using environment variables or by editing `application.properties`:
+The application can be configured via `application.yml` or environment variables:
 
-```properties
-contentstack.api.key=your-api-key
-contentstack.delivery.token=your-delivery-token
-contentstack.environment=production
-contentstack.region=us
+### Application Properties
+
+```yaml
+server:
+  port: 8080
+
+contentstack:
+  api-key: ${CONTENTSTACK_API_KEY:your-api-key}
+  delivery-token: ${CONTENTSTACK_DELIVERY_TOKEN:your-delivery-token}
+  environment: ${CONTENTSTACK_ENVIRONMENT:preview}
+  region: ${CONTENTSTACK_REGION:us}
+  api:
+    base-url: ${CONTENTSTACK_BASE_URL:https://cdn.contentstack.io/v3}
 ```
 
 ### Environment Variables
 
-You can also set these via environment variables:
-- `CONTENTSTACK_API_KEY`
-- `CONTENTSTACK_DELIVERY_TOKEN`
-- `CONTENTSTACK_ENVIRONMENT`
-- `CONTENTSTACK_REGION`
+You can override the default configuration using environment variables:
+
+- `CONTENTSTACK_API_KEY`: Your Contentstack API key
+- `CONTENTSTACK_DELIVERY_TOKEN`: Your Contentstack delivery token
+- `CONTENTSTACK_ENVIRONMENT`: Contentstack environment (e.g., preview, production)
+- `CONTENTSTACK_REGION`: Contentstack region (e.g., us, eu, azure-na)
+- `CONTENTSTACK_BASE_URL`: Base URL for Contentstack API (default: https://cdn.contentstack.io/v3)
+
+## API Endpoints
+
+All endpoints are prefixed with `/api/contentstack`.
+
+### 1. Get Web Configuration
+Retrieves web configuration entries from Contentstack.
+
+**Endpoint**: `GET /api/contentstack/web-config`
+
+**Query Parameters**:
+- `contentTypeUid` (required): The content type UID
+- `locale` (optional): Locale code (e.g., "en-us")
+- `variant` (optional): Variant name for personalization
+
+**Example**:
+```bash
+curl "http://localhost:8080/api/contentstack/web-config?contentTypeUid=web_config&locale=en-us"
+```
+
+### 2. Get Navigation Configuration
+Retrieves navigation configuration entries from Contentstack.
+
+**Endpoint**: `GET /api/contentstack/navigation-config`
+
+**Query Parameters**:
+- `contentTypeUid` (required): The content type UID
+- `locale` (optional): Locale code (e.g., "en-us")
+- `variant` (optional): Variant name for personalization
+
+**Example**:
+```bash
+curl "http://localhost:8080/api/contentstack/navigation-config?contentTypeUid=navigation_config&locale=en-us"
+```
+
+### 3. Get Personalized Configuration
+Retrieves personalized configuration entries from Contentstack.
+
+**Endpoint**: `GET /api/contentstack/personalized-config`
+
+**Query Parameters**:
+- `contentTypeUid` (required): The content type UID
+- `locale` (optional): Locale code (e.g., "en-us")
+- `variant` (optional): Variant name for personalization
+
+**Example**:
+```bash
+curl "http://localhost:8080/api/contentstack/personalized-config?contentTypeUid=personalized_config&locale=en-us"
+```
+
+### 4. Get Entries
+Retrieves page entries from Contentstack by content type.
+
+**Endpoint**: `GET /api/contentstack/entries`
+
+**Query Parameters**:
+- `contentTypeUid` (required): The content type UID
+- `locale` (required): Locale code (e.g., "en-us")
+- `personalizedVariant` (optional): Personalized variant name
+
+**Example**:
+```bash
+curl "http://localhost:8080/api/contentstack/entries?contentTypeUid=page&locale=en-us&personalizedVariant=variant1"
+```
+
+### 5. Health Check
+Simple health check endpoint.
+
+**Endpoint**: `GET /api/contentstack/health`
+
+**Example**:
+```bash
+curl "http://localhost:8080/api/contentstack/health"
+```
+
+## Actuator Endpoints
+
+The application exposes Spring Boot Actuator endpoints for monitoring:
+
+- `/actuator/health`: Application health status
+- `/actuator/info`: Application information
+- `/actuator/metrics`: Application metrics
 
 ## Running the Application
 
-1. Build the project:
+### Using Maven
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd content-stack-webflux
+```
+
+2. Configure your Contentstack credentials in `application.yml` or set environment variables.
+
+3. Build the project:
 ```bash
 mvn clean install
 ```
 
-2. Run the application:
+4. Run the application:
 ```bash
 mvn spring-boot:run
 ```
 
-The application will start on `http://localhost:8080`
+The application will start on `http://localhost:8080` by default.
 
-## API Endpoints
+### Using JAR
 
-### 1. Fetch Entries
-
-**GET** `/api/contentstack/entries`
-
-Query Parameters:
-- `contentTypeUid` (required): The content type UID
-- `locale` (optional): Locale code (e.g., "en-us")
-- `variant` (optional): Variant name
-- `include` (optional): List of fields to include
-- `exclude` (optional): List of fields to exclude
-- `query` (optional): Query parameters as key-value pairs
-- `skip` (optional): Number of entries to skip (pagination)
-- `limit` (optional): Maximum number of entries to return
-
-**Example:**
-```
-GET /api/contentstack/entries?contentTypeUid=blog_post&locale=en-us&variant=default
+1. Build the JAR:
+```bash
+mvn clean package
 ```
 
-**POST** `/api/contentstack/entries`
-
-Request Body:
-```json
-{
-  "contentTypeUid": "blog_post",
-  "locale": "en-us",
-  "variant": "default",
-  "include": ["title", "description"],
-  "skip": 0,
-  "limit": 10
-}
-```
-
-### 2. Fetch Entry by URL
-
-**GET** `/api/contentstack/entries/url`
-
-Query Parameters:
-- `url` (required): The URL of the entry
-- `locale` (optional): Locale code (e.g., "en-us")
-- `variant` (optional): Variant name
-
-**Example:**
-```
-GET /api/contentstack/entries/url?url=/blog/my-first-post&locale=en-us&variant=default
-```
-
-**POST** `/api/contentstack/entries/url`
-
-Request Body:
-```json
-{
-  "url": "/blog/my-first-post",
-  "locale": "en-us",
-  "variant": "default"
-}
-```
-
-### 3. Health Check
-
-**GET** `/api/contentstack/health`
-
-Returns the health status of the API.
-
-## Usage with Next.js
-
-This API is designed to be consumed by Next.js applications. Example usage:
-
-```javascript
-// Fetch entries
-const response = await fetch('http://localhost:8080/api/contentstack/entries?contentTypeUid=blog_post&locale=en-us');
-const data = await response.json();
-
-// Fetch entry by URL
-const entryResponse = await fetch('http://localhost:8080/api/contentstack/entries/url?url=/blog/my-post&locale=en-us');
-const entry = await entryResponse.json();
+2. Run the JAR:
+```bash
+java -jar target/content-stack-webflux-1.0.0.jar
 ```
 
 ## Project Structure
@@ -135,27 +186,50 @@ const entry = await entryResponse.json();
 src/
 ├── main/
 │   ├── java/
-│   │   └── com/contentstack/webflux/
-│   │       ├── config/          # Configuration classes
-│   │       ├── controller/       # REST controllers
-│   │       ├── dto/             # Data Transfer Objects
-│   │       ├── exception/       # Exception handlers
-│   │       └── service/         # Business logic services
+│   │   └── com/
+│   │       └── contentstack/
+│   │           └── webflux/
+│   │               ├── config/              # Configuration classes
+│   │               │   ├── ContentstackConfig.java
+│   │               │   ├── WebClientConfig.java
+│   │               │   └── WebConfig.java
+│   │               ├── controller/          # REST controllers
+│   │               │   └── ContentstackController.java
+│   │               ├── dto/                 # Data Transfer Objects
+│   │               │   ├── ContentstackPageResponse.java
+│   │               │   ├── EntryRequest.java
+│   │               │   ├── NavigationResponse.java
+│   │               │   ├── PersonalizeConfigResponse.java
+│   │               │   └── WebConfigResponse.java
+│   │               ├── exception/           # Exception handling
+│   │               │   └── GlobalExceptionHandler.java
+│   │               ├── service/            # Business logic
+│   │               │   ├── ContentstackClientService.java
+│   │               │   └── ContentstackIncludes.java
+│   │               └── ContentStackWebfluxApplication.java
 │   └── resources/
-│       └── application.properties
-└── test/
+│       └── application.yml                 # Application configuration
+└── pom.xml                                 # Maven dependencies
 ```
 
-## Technologies Used
+## Development
 
-- Spring Boot 3.2.0
-- Spring WebFlux
-- Project Reactor
-- Lombok
-- Jackson (JSON processing)
-- Maven
+### Logging
+
+The application uses SLF4J with Logback. Logging levels can be configured in `application.yml`:
+
+```yaml
+logging:
+  level:
+    com.contentstack: DEBUG
+    org.springframework.web: INFO
+    reactor.netty: INFO
+```
+
+### Error Handling
+
+The application includes a global exception handler (`GlobalExceptionHandler`) that provides consistent error responses across all endpoints.
 
 ## License
 
-This project is licensed under the MIT License.
-
+This project is a proof of concept (POC) for Contentstack integration using Spring WebFlux.
