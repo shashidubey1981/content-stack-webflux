@@ -47,11 +47,34 @@ public class NavigationResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Navigation {
-        @JsonProperty("title")
-        private String title;
-        @JsonProperty("items")
+
+        @JsonProperty("logo")
+        private Asset logo;
+
+        @JsonProperty("promotion_bar")
+        private PromotionBar promotionBar;
+
+        @JsonProperty("catalog_search_place_holder")
+        private String catalogSearchPlaceholder;
+
+        @JsonProperty("nav_items")
         private List<NavItems> items;
     }
+
+    // ========= PROMOTION BAR =========
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PromotionBar {
+        @JsonProperty("enabled")
+        private Boolean enabled;
+        @JsonProperty("text")
+        private String text;
+        @JsonProperty("link")
+        private String link;
+    }
+    // ========= NAVIGATION ITEMS =========
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,7 +85,7 @@ public class NavigationResponse {
         public String text;
 
         @JsonProperty("mega_menu")
-        private MegaMenu megaMenu;
+        private List<MegaMenu> megaMenu;
     }
 
     // ========= MEGA MENU =========
@@ -73,6 +96,12 @@ public class NavigationResponse {
 
         @JsonProperty("sections")
         private Section sections;
+
+        @JsonProperty("sub_sections")
+        private SubSection subSections;
+
+        @JsonProperty("feature_cards")
+        private List<FeatureCards> featureCards;
     }
 
     // ========= SECTION =========
@@ -83,6 +112,16 @@ public class NavigationResponse {
 
         @JsonProperty("links")
         private List<SectionLink> links;
+    }
+
+    // =========SUB SECTION =========
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SubSection {
+
+        @JsonProperty("links")
+        private List<SubSectionLink> links;
     }
 
     // ========= LINK =========
@@ -96,6 +135,34 @@ public class NavigationResponse {
 
         @JsonProperty("link_text")
         private String linkText;
+    }
+
+    // ========= SUB SECTION LINK =========
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SubSectionLink {
+
+        @JsonProperty("link")
+        private String link;
+
+        @JsonProperty("link_text")
+        private String linkText;
+    }
+
+    // ========= FEATURE CARDS =========
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class FeatureCards {
+        @JsonProperty("image")
+        private Asset image;
+        @JsonProperty("title")
+        private String title;
+        @JsonProperty("subtitle")
+        private String subtitle;
+        @JsonProperty("link")
+        private String link;
     }
 
 
@@ -266,21 +333,29 @@ public class NavigationResponse {
 
         
         @JsonProperty("content_type")
-        public String contentType;
+        private String contentType;
+
+        @JsonProperty("dimension")
+        private Dimension dimension;
 
         @JsonProperty("file_size")
-        public String fileSize;
+        private String fileSize;
 
-        public String filename;
+        @JsonProperty("filename")
+        private String filename;
 
         @JsonProperty("is_dir")
-        public Boolean isDir;
+        private Boolean isDir;
 
-        public String url;
+        @JsonProperty("url")
+        private String url;
 
-        // optional: some assets include title/description
-        public String title;
-        public String description;
-
+    }
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Dimension {
+        private Integer height;
+        private Integer width;
     }
 }

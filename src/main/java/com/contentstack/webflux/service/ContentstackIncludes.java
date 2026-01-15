@@ -52,12 +52,12 @@ public final class ContentstackIncludes {
     // ================= NAVIGATION =================
     public static final List<String> NAVIGATION_REFERENCE_INCLUDES = List.of(
             "header",
-            "header.items",
-            "header.items.mega_menu",
-            "header.items.mega_menu.sections",
-            "header.items.mega_menu.sections.links",
-            "header.items.mega_menu.sub_sections",
-            "header.items.mega_menu.sub_sections.links"
+            "header.nav_items",
+            "header.nav_items.mega_menu",
+            "header.nav_items.mega_menu.sections",
+            "header.nav_items.mega_menu.sections.links",
+            "header.nav_items.mega_menu.sub_sections",
+            "header.nav_items.mega_menu.sub_sections.links"
     );
 
     // ================= FOOTER =================
