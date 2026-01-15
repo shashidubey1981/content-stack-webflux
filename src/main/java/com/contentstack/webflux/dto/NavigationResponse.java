@@ -49,7 +49,7 @@ public class NavigationResponse {
     public static class Navigation {
 
         @JsonProperty("logo")
-        private Asset logo;
+        private Logo logo;
 
         @JsonProperty("promotion_bar")
         private PromotionBar promotionBar;
@@ -329,9 +329,24 @@ public class NavigationResponse {
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Asset {
+    public static class Logo {
 
         
+        @JsonProperty("logo_image")
+        private Asset logo;
+
+        @JsonProperty("link")
+        private String link;
+
+        @JsonProperty("alt_text")
+        private String alt_text;
+
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Asset {
         @JsonProperty("content_type")
         private String contentType;
 
@@ -349,8 +364,8 @@ public class NavigationResponse {
 
         @JsonProperty("url")
         private String url;
-
     }
+
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -358,4 +373,5 @@ public class NavigationResponse {
         private Integer height;
         private Integer width;
     }
+
 }
