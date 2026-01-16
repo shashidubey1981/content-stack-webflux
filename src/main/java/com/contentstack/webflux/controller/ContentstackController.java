@@ -46,11 +46,11 @@ public class ContentstackController {
     })
     @GetMapping("/web-config")
     public Mono<ResponseEntity<WebConfigResponse.Entry>> getWebConfig(
-            @Parameter(description = "Content type UID", required = true, example = "web_config")
+            @Parameter(description = "Content type UID", required = true, example = "tbw_web_config")
             @RequestParam String contentTypeUid,
-            @Parameter(description = "Locale code", required = false, example = "en-us")
+            @Parameter(description = "Locale code", required = false, example = "en")
             @RequestParam(required = false) String locale,
-            @Parameter(description = "Variant name", required = false, example = "{}")
+            @Parameter(description = "Variant name", required = false, example = "")
             @RequestParam(required = false) String variant) {
 
         log.info("Received request to fetch entries for content type: {}", contentTypeUid);
@@ -81,7 +81,7 @@ public class ContentstackController {
             @RequestParam String contentTypeUid,
             @Parameter(description = "Locale code", required = false, example = "en")
             @RequestParam(required = false) String locale,
-            @Parameter(description = "Variant name", required = false, example = "{}")
+            @Parameter(description = "Variant name", required = false, example = "")
             @RequestParam(required = false) String variant) {
 
         log.info("Received request to fetch navigation config for content type: {}", contentTypeUid);
@@ -108,11 +108,11 @@ public class ContentstackController {
     })
     @GetMapping("/personalized-config")
     public Mono<ResponseEntity<PersonalizeConfigResponse.Entry>> getPersonalizedConfig(
-            @Parameter(description = "Content type UID", required = true, example = "personalized_config")
+            @Parameter(description = "Content type UID", required = true, example = "personalize_config")
             @RequestParam String contentTypeUid,
             @Parameter(description = "Locale code", required = false, example = "en")
             @RequestParam(required = false) String locale,
-            @Parameter(description = "Variant name", required = false, example = "{}")
+            @Parameter(description = "Variant name", required = false, example = "")
             @RequestParam(required = false) String variant) {
 
         log.info("Received request to fetch entries for content type: {}", contentTypeUid);
@@ -144,7 +144,7 @@ public class ContentstackController {
             @RequestParam String contentTypeUid,
             @Parameter(description = "Locale code", required = true, example = "en")
             @RequestParam(required = true) String locale,
-            @Parameter(description = "Personalized variant name", required = false, example = "{}")
+            @Parameter(description = "Personalized variant name", required = false, example = "")
             @RequestParam(required = false) String personalizedVariant) {
 
         log.info("Received request to fetch entries for content type: {}", contentTypeUid);

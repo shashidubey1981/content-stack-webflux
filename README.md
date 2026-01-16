@@ -64,6 +64,11 @@ You can override the default configuration using environment variables:
 
 ## API Endpoints
 
+Swagger UI: http://localhost:8080/swagger-ui.html
+OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+
+
 All endpoints are prefixed with `/api/contentstack`.
 
 ### 1. Get Web Configuration

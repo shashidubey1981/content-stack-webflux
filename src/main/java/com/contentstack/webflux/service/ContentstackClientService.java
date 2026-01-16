@@ -14,8 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -64,16 +62,21 @@ public class ContentstackClientService {
                 .fromUriString(baseUrl)
                 .path("/content_types/{contentTypeUid}/entries");
 
+        // Add environment
+        uriBuilder.queryParam("environment", environment);
+        
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
         }
 
-
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES);
-
+        // Add include parameters - Contentstack expects include[]=value format
+        for (String include : ContentstackIncludes.WEB_CONFIG_REFERENCE_INCLUDES) {
+            uriBuilder.queryParam("include[]", include);
+        }
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+        log.debug("Request URI: {}", uri);
 
         return getWebClient()
                 .get()
@@ -113,16 +116,21 @@ public class ContentstackClientService {
                 .fromUriString(baseUrl)
                 .path("/content_types/{contentTypeUid}/entries");
 
+        // Add environment
+        uriBuilder.queryParam("environment", environment);
+        
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
         }
 
-
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.NAVIGATION_CONFIG_REFERENCE_INCLUDES);
-        
+        // Add include parameters - Contentstack expects include[]=value format
+        for (String include : ContentstackIncludes.NAVIGATION_CONFIG_REFERENCE_INCLUDES) {
+            uriBuilder.queryParam("include[]", include);
+        }
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+        log.debug("Request URI: {}", uri);
 
         return getWebClient()
                 .get()
@@ -159,13 +167,16 @@ public class ContentstackClientService {
                 .fromUriString(baseUrl)
                 .path("/content_types/{contentTypeUid}/entries");
 
+        // Add environment
+        uriBuilder.queryParam("environment", environment);
+        
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
         }
 
-
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+        log.debug("Request URI: {}", uri);
 
         return getWebClient()
                 .get()
@@ -213,18 +224,23 @@ public class ContentstackClientService {
                 .fromUriString(baseUrl)
                 .path("/content_types/{contentTypeUid}/entries");
 
+        // Add environment
+        uriBuilder.queryParam("environment", environment);
+        
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
         }
 
         // Add variant if provided
-        if (variant != null && !variant.isEmpty()) {
+        if (variant != null && !variant.isEmpty() && !variant.equals("{}")) {
             uriBuilder.queryParam("variant", variant);
         }
 
-        // Add include fields
-        uriBuilder.queryParam("include[][]", ContentstackIncludes.WEB_LANDING_PAGE_REFERENCE_INCLUDES);
+        // Add include parameters - Contentstack expects include[]=value format
+        for (String include : ContentstackIncludes.WEB_LANDING_PAGE_REFERENCE_INCLUDES) {
+            uriBuilder.queryParam("include[]", include);
+        }
 
         String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
         log.debug("Request URI: {}", uri);

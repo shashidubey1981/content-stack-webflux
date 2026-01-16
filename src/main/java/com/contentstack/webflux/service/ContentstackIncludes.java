@@ -100,9 +100,7 @@ public final class ContentstackIncludes {
      */
     public static final List<String> WEB_CONFIG_REFERENCE_INCLUDES =
             concat(
-                    NAVIGATION_REFERENCE_INCLUDES,
-                    FOOTER_REFERENCE_INCLUDES,
-                    USER_FORM_REFERENCE_INCLUDES
+                    QUICK_LINKS_REFERENCE_INCLUDES
             );
 
     public static final List<String> NAVIGATION_CONFIG_REFERENCE_INCLUDES =
