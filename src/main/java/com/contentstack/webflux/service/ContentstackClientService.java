@@ -5,6 +5,7 @@ import com.contentstack.webflux.dto.ContentstackPageResponse;
 import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import com.contentstack.webflux.dto.NavigationResponse;
+import com.contentstack.webflux.dto.FeatureFlagConfigResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -64,7 +65,7 @@ public class ContentstackClientService {
 
         // Add environment
         uriBuilder.queryParam("environment", environment);
-        
+
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
@@ -98,6 +99,55 @@ public class ContentstackClientService {
                 .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
     }
 
+    public Mono<FeatureFlagConfigResponse.Entry> fetchFeatureFlagConfig(
+            String contentTypeUid,
+            String locale,
+            String variant) {
+
+        log.info("Fetching entries for content type: {}, locale: {}, variant: {}",
+                contentTypeUid, locale, variant);
+
+        final String baseUrl = Objects.requireNonNullElse(
+                (config.getApi() != null ? config.getApi().getBaseUrl() : null),
+                "https://api.contentstack.io/v3");
+        final String environment = Objects.requireNonNullElse(config.getEnvironment(), "production");
+        log.info("Environment: {}", environment);
+        log.info("Base URL: {}", baseUrl);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path("/content_types/{contentTypeUid}/entries");
+
+        // Add environment
+        uriBuilder.queryParam("environment", environment);
+
+        // Add locale if provided
+        if (locale != null && !locale.isEmpty()) {
+            uriBuilder.queryParam("locale", locale);
+        }
+
+        String uri = uriBuilder.buildAndExpand(contentTypeUid).toUriString();
+        log.debug("Request URI: {}", uri);
+
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(FeatureFlagConfigResponse.class)
+                .flatMap(response -> {
+                    if (response == null || response.getEntries() == null || response.getEntries().isEmpty()) {
+                        log.warn("No entries found in response");
+                        return Mono.error(new RuntimeException("No entries found in response"));
+                    }
+
+                    FeatureFlagConfigResponse.Entry firstEntry = response.getEntries().get(0);
+                    log.info("Found {} entries, using first entry", response.getEntries().size());
+                    log.info("Successfully extracted web config entry");
+                    return Mono.just(firstEntry);
+                })
+                .doOnSuccess(response -> log.info("Successfully fetched web config"))
+                .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
+    }
+
     public Mono<NavigationResponse.Entry> fetchNavigationConfig(
             String contentTypeUid,
             String locale,
@@ -118,7 +168,7 @@ public class ContentstackClientService {
 
         // Add environment
         uriBuilder.queryParam("environment", environment);
-        
+
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
@@ -169,7 +219,7 @@ public class ContentstackClientService {
 
         // Add environment
         uriBuilder.queryParam("environment", environment);
-        
+
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
@@ -226,7 +276,7 @@ public class ContentstackClientService {
 
         // Add environment
         uriBuilder.queryParam("environment", environment);
-        
+
         // Add locale if provided
         if (locale != null && !locale.isEmpty()) {
             uriBuilder.queryParam("locale", locale);
