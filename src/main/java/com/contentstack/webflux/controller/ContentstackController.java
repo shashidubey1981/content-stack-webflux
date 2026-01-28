@@ -4,7 +4,6 @@ import com.contentstack.webflux.dto.ContentstackPageResponse;
 import com.contentstack.webflux.dto.PersonalizeConfigResponse;
 import com.contentstack.webflux.dto.WebConfigResponse;
 import com.contentstack.webflux.dto.NavigationResponse;
-import com.contentstack.webflux.dto.FeatureFlagConfigResponse;
 import com.contentstack.webflux.service.ContentstackClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 
 @RestController
@@ -70,15 +71,15 @@ public class ContentstackController {
     // ===== Feature Flag Configuration =====
     @Operation(
             summary = "Get Feature Flag Configuration",
-            description = "Fetches feature flag configuration entries from Contentstack based on content type UID, locale, and variant"
+            description = "Fetches feature flag configuration entries from Contentstack and returns merged configuration as a JSON object"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved web configuration",
-                    content = @Content(schema = @Schema(implementation = FeatureFlagConfigResponse.Entry.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved merged feature flag configuration",
+                    content = @Content(schema = @Schema(implementation = Map.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/feature-flag-config")
-    public Mono<ResponseEntity<FeatureFlagConfigResponse.Entry>> getFeatureFlagConfig(
+    public Mono<ResponseEntity<Map<String, Object>>> getFeatureFlagConfig(
             @Parameter(description = "Content type UID", required = true, example = "feature_flag")
             @RequestParam String contentTypeUid,
             @Parameter(description = "Locale code", required = false, example = "en")
@@ -86,13 +87,13 @@ public class ContentstackController {
             @Parameter(description = "Variant name", required = false, example = "")
             @RequestParam(required = false) String variant) {
 
-        log.info("Received request to fetch entries for content type: {}", contentTypeUid);
+        log.info("Received request to fetch feature flag config for content type: {}", contentTypeUid);
 
         return contentstackClientService
                 .fetchFeatureFlagConfig(contentTypeUid, locale, variant)
                 .map(ResponseEntity::ok)
                 .onErrorResume(error -> {
-                    log.error("Error processing entries request: {}", error.getMessage());
+                    log.error("Error processing feature flag config request: {}", error.getMessage());
                     return Mono.just(ResponseEntity
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .build());

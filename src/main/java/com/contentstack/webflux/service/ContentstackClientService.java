@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -99,7 +100,7 @@ public class ContentstackClientService {
                 .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
     }
 
-    public Mono<FeatureFlagConfigResponse.Entry> fetchFeatureFlagConfig(
+    public Mono<Map<String, Object>> fetchFeatureFlagConfig(
             String contentTypeUid,
             String locale,
             String variant) {
@@ -141,11 +142,25 @@ public class ContentstackClientService {
 
                     FeatureFlagConfigResponse.Entry firstEntry = response.getEntries().get(0);
                     log.info("Found {} entries, using first entry", response.getEntries().size());
-                    log.info("Successfully extracted web config entry");
-                    return Mono.just(firstEntry);
+                    
+                    // Debug: Log what configs we have
+                    log.debug("boolean_config size: {}", firstEntry.getBoolean_config() != null ? firstEntry.getBoolean_config().size() : 0);
+                    log.debug("numbers_config size: {}", firstEntry.getNumbers_config() != null ? firstEntry.getNumbers_config().size() : 0);
+                    log.debug("strings_configs size: {}", firstEntry.getStrings_configs() != null ? firstEntry.getStrings_configs().size() : 0);
+                    log.debug("string_lists size: {}", firstEntry.getString_lists() != null ? firstEntry.getString_lists().size() : 0);
+                    
+                    // Get the merged config map
+                    Map<String, Object> mergedConfig = firstEntry.getMergedConfig();
+                    log.info("Successfully extracted merged config with {} keys: {}", mergedConfig.size(), mergedConfig.keySet());
+                    
+                    if (mergedConfig.isEmpty()) {
+                        log.warn("Merged config is empty - no configuration values found in any config lists");
+                    }
+                    
+                    return Mono.just(mergedConfig);
                 })
-                .doOnSuccess(response -> log.info("Successfully fetched web config"))
-                .doOnError(error -> log.error("Error fetching web config: {}", error.getMessage(), error));
+                .doOnSuccess(response -> log.info("Successfully fetched feature flag config"))
+                .doOnError(error -> log.error("Error fetching feature flag config: {}", error.getMessage(), error));
     }
 
     public Mono<NavigationResponse.Entry> fetchNavigationConfig(
