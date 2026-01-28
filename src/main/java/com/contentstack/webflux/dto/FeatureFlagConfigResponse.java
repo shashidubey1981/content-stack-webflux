@@ -154,7 +154,7 @@ public class FeatureFlagConfigResponse {
         }
     }
 
-    // ===== numbers_config (your "value" is coming as a string in sample) =====
+    // ===== numbers_config =====
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -162,14 +162,14 @@ public class FeatureFlagConfigResponse {
         @JsonProperty("key")
         private String key;
         @JsonProperty("value")
-        private String value;
+        private Long value;
 
         // Explicit getters for Maven compilation
         public String getKey() {
             return key;
         }
 
-        public String getValue() {
+        public Long getValue() {
             return value;
         }
     }
