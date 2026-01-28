@@ -121,8 +121,36 @@ public class FeatureFlagConfigResponse {
                         }
                     }
                 }
+
+                // Iterate single_object: key = SingleObjectConfig.key, value = map of category key -> value
+                if (single_object != null) {
+                    for (SingleObjectConfig config : single_object) {
+                        if (config != null && config.getKey() != null) {
+                            merged_config.put(config.getKey(), toCategoryMap(config));
+                        }
+                    }
+                }
             }
             return merged_config;
+        }
+
+        /**
+         * Builds a map from a SingleObjectConfig's category list (each category item's key and value).
+         * Used as the value for SingleObjectConfig.key in the merged config.
+         *
+         * @param config the SingleObjectConfig containing category items
+         * @return map of category item key -> value; never null
+         */
+        private static Map<String, Object> toCategoryMap(SingleObjectConfig config) {
+            Map<String, Object> categoryMap = new HashMap<>();
+            if (config != null && config.getCategory() != null) {
+                for (CategoryItem item : config.getCategory()) {
+                    if (item != null && item.getKey() != null) {
+                        categoryMap.put(item.getKey(), item.getValue());
+                    }
+                }
+            }
+            return categoryMap;
         }
 
         /**
@@ -217,6 +245,15 @@ public class FeatureFlagConfigResponse {
     public static class SingleObjectConfig {
         private String key;
         private List<CategoryItem> category;
+
+        // Explicit getters for Maven compilation
+        public String getKey() {
+            return key;
+        }
+
+        public List<CategoryItem> getCategory() {
+            return category;
+        }
     }
 
     @Data
@@ -225,6 +262,15 @@ public class FeatureFlagConfigResponse {
     public static class CategoryItem {
         private String key;
         private String value;
+
+        // Explicit getters for Maven compilation
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     // ===== json_list =====
