@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +131,15 @@ public class FeatureFlagConfigResponse {
                         }
                     }
                 }
+
+                // Iterate json_list: key = JsonListConfig.key, value = ArrayList of objects (list_items.key, list_items.value)
+                if (json_list != null) {
+                    for (JsonListConfig config : json_list) {
+                        if (config != null && config.getKey() != null) {
+                            merged_config.put(config.getKey(), toJsonListItemList(config));
+                        }
+                    }
+                }
             }
             return merged_config;
         }
@@ -151,6 +161,27 @@ public class FeatureFlagConfigResponse {
                 }
             }
             return categoryMap;
+        }
+
+        /**
+         * Builds an ArrayList from a JsonListConfig's list_items; each element is a map with "key" and "value".
+         * Used as the value for JsonListConfig.key in the merged config.
+         *
+         * @param config the JsonListConfig containing list_items
+         * @return list of maps (key, value) per list item; never null
+         */
+        private static List<Map<String, Object>> toJsonListItemList(JsonListConfig config) {
+            List<Map<String, Object>> list = new ArrayList<>();
+            if (config != null && config.getList_items() != null) {
+                for (JsonListItem item : config.getList_items()) {
+                    if (item != null) {
+                        Map<String, Object> entry = new HashMap<>();
+                        entry.put(item.getKey(), item.getValue());
+                        list.add(entry);
+                    }
+                }
+            }
+            return list;
         }
 
         /**
@@ -280,6 +311,15 @@ public class FeatureFlagConfigResponse {
     public static class JsonListConfig {
         private String key;
         private List<JsonListItem> list_items;
+
+        // Explicit getters for Maven compilation
+        public String getKey() {
+            return key;
+        }
+
+        public List<JsonListItem> getList_items() {
+            return list_items;
+        }
     }
 
     @Data
@@ -288,6 +328,15 @@ public class FeatureFlagConfigResponse {
     public static class JsonListItem {
         private String key;
         private String value;
+
+        // Explicit getters for Maven compilation
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
-    
+
 }
