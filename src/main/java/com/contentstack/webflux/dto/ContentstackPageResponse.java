@@ -236,6 +236,16 @@ public class ContentstackPageResponse {
     @JsonDeserialize(using = RichTextDeserializer.class)
     public static class RichText {
         private JsonNode content;
+
+        /** Serialize as the content value only (no wrapper object). */
+        @JsonValue
+        public JsonNode getContent() {
+            return content;
+        }
+
+        public void setContent(JsonNode content) {
+            this.content = content;
+        }
     }
 
     /** Deserializes RichText from either a string (e.g. HTML) or an object. */
